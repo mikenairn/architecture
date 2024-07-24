@@ -84,6 +84,31 @@ The rate limit counters can also be shared and used by different clusters in ord
 
 Shown above is a multi-cluster multi ingress gateway topology. This might be used to support a geographically distributed system for example. However, it is also possible to leverage overlay networking tools such as [Skupper](https://skupper.io) that integrate at the Kubernetes service level to have a single gateway cluster that then integrates with multiple backends (on different clusters or in custom infrastructure).
 
+### Observability
+
+The Kuadrant architecture is intended to work with some popular monitoring tools for tracing, metrics and log aggregation.
+Those tools are:
+
+- [Prometheus](https://prometheus.io/) for scraping metrics - and optionally [Thanos](https://github.com/thanos-io/thanos) for high availability & federation
+- [Loki](https://github.com/grafana/loki) for log aggregation - via log collectors like [vector](https://github.com/vectordotdev/vector)
+- [Tempo](https://github.com/grafana/tempo) for trace collecting
+- [Grafana](https://github.com/grafana/grafana) for visualing the above
+
+Depending on the number of clusters in your configuration, you may decide to have a monitoring system on the same cluster as workloads,
+or in a separate cluster completely.
+Below are 2 example architectures based on the single cluster and multi cluster layouts.
+In the single cluster architecture, the collector components (prometheus, vector and tempo) are in the same cluster as the log aggregation (loki) and visualisation component (Grafana).
+
+![](./images/arch_observability_1.jpg)
+
+In the multi cluster architecture, the collectors that scrape metrics or logs (prometheus & vector) are deployed alongside the workloads in each cluster.
+However, as traces are sent to a collector (tempo) from each component, it can be centralised in a separate cluster.
+Thanos is used in this architecutre so that each prometheus can federate metrics back to a central location.
+The log collector (vector) can forward logs to a central loki instance.
+Finally, the visualisation component (Grafana) is centralised as well, with data sources configured for each of the 3 components on the same cluster.
+
+![](./images/arch_observability_2.jpg)
+
 ### Dependencies
 
 #### [Istio](https://istio.io): **Required**
