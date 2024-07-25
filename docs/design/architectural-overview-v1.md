@@ -97,12 +97,12 @@ Those tools are:
 Depending on the number of clusters in your configuration, you may decide to have a monitoring system on the same cluster as workloads,
 or in a separate cluster completely.
 Below are 2 example architectures based on the single cluster and multi cluster layouts.
-In the single cluster architecture, the collector components (prometheus, vector and tempo) are in the same cluster as the log aggregation (loki) and visualisation component (Grafana).
+In the single cluster architecture, the collector components (Prometheus, Vector and Tempo) are in the same cluster as the log aggregation (Loki) and visualisation component (Grafana).
 
 ![](./images/arch_observability_1.jpg)
 
-In the multi cluster architecture, the collectors that scrape metrics or logs (prometheus & vector) are deployed alongside the workloads in each cluster.
-However, as traces are sent to a collector (tempo) from each component, it can be centralised in a separate cluster.
+In the multi cluster architecture, the collectors that scrape metrics or logs (Prometheus & Vector) are deployed alongside the workloads in each cluster.
+However, as traces are sent to a collector (Tempo) from each component, it can be centralised in a separate cluster.
 Thanos is used in this architecutre so that each prometheus can federate metrics back to a central location.
 The log collector (vector) can forward logs to a central loki instance.
 Finally, the visualisation component (Grafana) is centralised as well, with data sources configured for each of the 3 components on the same cluster.
