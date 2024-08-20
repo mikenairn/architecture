@@ -2,7 +2,7 @@
 
 - Feature Name: gateway-api-metrics-exporter
 - Start Date: 2024-07-26
-- RFC PR: [Kuadrant/architecture#0000](https://github.com/Kuadrant/architecture/pull/0000)
+- RFC PR: [Kuadrant/architecture#101](https://github.com/Kuadrant/architecture/pull/101)
 - Issue tracking: [kuadrant-operator/issues/675](https://github.com/Kuadrant/kuadrant-operator/issues/675)
 
 # Summary
