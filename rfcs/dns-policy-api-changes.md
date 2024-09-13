@@ -1,16 +1,18 @@
-# RFC Remove Strategy and Simple option from DNSPolicy
+# RFC DNSPolicy v1 changes and improvements
 
 - Feature Name: (fill me in with a unique ident, `dns_policy_api_changes`)
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
+- Start Date: (fill me in with today's date, 2024-09-11)
 - RFC PR: [Kuadrant/architecture#0000](https://github.com/Kuadrant/architecture/pull/0000)
 - Issue tracking: [https://github.com/Kuadrant/architecture/issues/104](https://github.com/Kuadrant/architecture/issues/104)
 
 # Summary
 [summary]: #summary
 
-DNSPolicy is soon to go GA. There are several improvement we have identified overtime that will enhance the GA of this API
+DNSPolicy is soon to go GA. There are several improvement we have identified over time that will enhance the GA of this API
 
-- Remove need for labels on Gateways for GEO and custom weighting values
+- Remove the need for labels on Gateways for GEO and custom weighting values
+
+- Reduce the verbosity of GEO and Weighting definitions
 
 - Remove the need for a strategy to be chosen as part of the policy definition.
 
@@ -18,24 +20,24 @@ DNSPolicy is soon to go GA. There are several improvement we have identified ove
 # Motivation
 [motivation]: #motivation
 
-We want to simplify and improve the DNSPolicy API and remove some of the legacy structures that have hung on since its original inception.
+We want to simplify and improve the DNSPolicy API and remove some of the legacy structures that have hung on since its original inception, as this involves some breaking changes we want these before we create a v1 API.
 
 **Weighting and GEO attributes:**
 
-The loadbalancing options we provide were first designed as part of an API that was intended to work with OCM (open cluster management). This provided multiple views of gateways across multiple clusters. So in order to understand the GEO context or individual weighing needed for a given cluster, we needed that context applying separately from the DNSPolicy spec.
+The loadbalancing options we provide were first designed as part of an API that was intended to work with OCM (open cluster management). This provided multiple views of gateways across multiple clusters. So in order to understand the GEO context or individual weighing needed for a given cluster, we needed that context applying separately from the DNSPolicy spec that for legacy reasons targeted a "template" Gateway in the hub cluster.
 
-Now the DNSPolicy is created on the same cluster as the Gateway and we do not use OCM anymore. So the need to label Gateways with specific annotations is now redundant and makes for a more complex and awkward API interaction.
+Now DNSPolicy is created on the same cluster as the actual Gateway and we do not use OCM or hub clusters, the need to label individual objects and Gateways with specific annotations and labels is now redundant and makes for a more complex and awkward API interaction.
 
 **routingStrategy:**
 
-We have also identified that the routingStrategy option in the DNSPolicy is also redundant. When added we expected there to be more than two strategies. This has not emerged and so it another awkward piece of the API that is not needed.
+We have also identified that the routingStrategy option in the DNSPolicy spec is redundant. When added we expected there to be more than two strategies. This has not emerged and so it is another awkward piece of the API that is not needed.
 
 # Guide-level explanation
 [guide-level-explanation]: #guide-level-explanation
 
-You will no longer need to apply labels to Gateways in order to specify the GEO or Weighting for that Gateway. The policy targets a given Gateway and you will now just specify those values in the policy spec.
+You will no longer need to apply labels to Gateways in order to specify the GEO or Weighting for that Gateway. The policy targets a given Gateway and you will now just specify those values in the policy spec directly.
 
-You will no longer need to specify what routingStrategy you want to use. Instead you will wither specify a loadbalancing section (meaning it is a loadbalanced strategy) or you will leave it empty (meaning it has no loadbalancing).
+You will no longer need to specify what routingStrategy you want to use. Instead you will either specify a loadbalancing section (meaning it is a loadbalanced strategy) or you will leave it empty (meaning it has no loadbalancing).
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
@@ -61,7 +63,7 @@ spec:
         - weight: 255
           selector:
             matchLabels:
-              kuadrant.io/lb-attribute-custom-weight: AWS
+              kuadrant.io/lb-attribute-custom-weight: AWS # slects gateways to apply it to (when there can only be one)
     geo: 
       defaultGeo: US #catch all geo              
 
@@ -93,7 +95,7 @@ spec:
   loadBalancing:
     weight: 100 #weight for listeners targeted 
     geo: US # geo for listeners targeted 
-    defaultGEO: true # should this be consisdered the default GEO
+    defaultGEO: true # should this be consisdered the default GEO for the listener hosts
   providerRefs:
     - name: aws-credential-secret    
 ```
@@ -127,12 +129,12 @@ Again no need for the redundant strategy field.
 # Drawbacks
 [drawbacks]: #drawbacks
 
-TODO
+Introduces a breaking change to the API.
 
 # Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
-TODO
+These are breaking changes and we are about to move to v1. Changes like these should land pre v1. These changes provide a much simpler and better user experience.
 
 # Prior art
 [prior-art]: #prior-art
