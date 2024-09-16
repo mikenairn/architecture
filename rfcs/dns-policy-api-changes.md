@@ -1,7 +1,7 @@
 # RFC DNSPolicy v1 changes and improvements
 
 - Feature Name: (`dns_policy_api_changes`)
-- Start Date: (fill me in with today's date, 2024-09-11)
+- Start Date: (2024-09-11)
 - RFC PR: [Kuadrant/architecture#0000](https://github.com/Kuadrant/architecture/pull/0000)
 - Issue tracking: [https://github.com/Kuadrant/architecture/issues/104](https://github.com/Kuadrant/architecture/issues/104)
 
